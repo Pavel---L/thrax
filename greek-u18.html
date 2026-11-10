@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ελληνικά · Урок 18</title>
+<style>
+  :root{
+    --ink:#12242c;
+    --panel:#17303a;
+    --panel-2:#1e3d49;
+    --line:#2c5462;
+    --text:#ece5d7;
+    --muted:#93aab4;
+    --ochre:#d8a13a;
+    --sea:#67b6a2;
+    --wine:#c9615f;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Noto Serif",Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    padding:0 14px 40px;
+  }
+  .wrap{max-width:34rem;margin:0 auto}
+
+  header{padding:18px 2px 10px}
+  h1{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:1.45rem;
+    letter-spacing:.01em;
+    margin:0;
+  }
+  .sub{color:var(--muted);font-size:.82rem;margin-top:3px}
+
+  .bar{height:5px;background:var(--panel);border-radius:3px;overflow:hidden;margin:12px 0 4px}
+  .bar i{display:block;height:100%;width:0;background:var(--ochre);transition:width .35s ease}
+  .barlabel{display:flex;justify-content:space-between;font-size:.74rem;color:var(--muted)}
+
+  .seg{display:flex;gap:6px;overflow-x:auto;padding:12px 0 6px;scrollbar-width:none}
+  .seg::-webkit-scrollbar{display:none}
+  .seg button{
+    flex:0 0 auto;background:none;border:1px solid var(--line);color:var(--muted);
+    font:inherit;font-size:.8rem;padding:7px 12px;border-radius:999px;cursor:pointer;
+  }
+  .seg button[aria-pressed="true"]{background:var(--panel-2);color:var(--text);border-color:var(--panel-2)}
+  .seg button:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:26px 20px;
+    margin-top:12px;
+    min-height:190px;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+  }
+  .prompt-gr{font-family:var(--serif);font-size:2.05rem;line-height:1.2;word-break:break-word}
+  .prompt-ru{font-size:1.3rem;line-height:1.35}
+  .answer{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);width:100%;color:var(--text)}
+  .answer.gr{font-family:var(--serif);font-size:1.6rem}
+  .hint{color:var(--muted);font-size:.8rem;margin-top:14px}
+
+  .speak{
+    margin-top:14px;background:none;border:1px solid var(--line);color:var(--muted);
+    border-radius:999px;width:44px;height:44px;font-size:1.1rem;cursor:pointer;
+  }
+  .speak:active{background:var(--panel-2)}
+
+  .opts{display:grid;gap:8px;margin-top:12px}
+  .opt{
+    text-align:left;background:var(--panel);border:1px solid var(--line);color:var(--text);
+    font:inherit;font-size:1rem;padding:13px 14px;border-radius:11px;cursor:pointer;
+    display:flex;gap:10px;align-items:baseline;
+  }
+  .opt .n{color:var(--muted);font-size:.75rem;min-width:11px}
+  .opt.gr{font-family:var(--serif);font-size:1.15rem}
+  .opt.right{border-color:var(--sea);background:#1b3d3a}
+  .opt.wrong{border-color:var(--wine);background:#3a2226}
+  .opt:disabled{cursor:default;opacity:.85}
+  .opt.right:disabled,.opt.wrong:disabled{opacity:1}
+
+  .row{display:flex;gap:8px;margin-top:12px}
+  .btn{
+    flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--text);
+    font:inherit;font-size:.95rem;padding:13px;border-radius:11px;cursor:pointer;
+  }
+  .btn.primary{background:var(--ochre);border-color:var(--ochre);color:#20180a;font-weight:600}
+  .btn.ghost{background:none}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+
+  input[type=text]{
+    width:100%;margin-top:12px;background:var(--panel);border:1px solid var(--line);
+    border-radius:11px;color:var(--text);font-family:var(--serif);font-size:1.3rem;padding:13px 14px;
+  }
+  .verdict{margin-top:12px;font-size:.95rem;text-align:center}
+  .verdict.ok{color:var(--sea)}
+  .verdict.no{color:var(--wine)}
+  .verdict b{font-family:var(--serif);font-size:1.15rem;font-weight:400}
+
+  .score{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px;font-size:.75rem}
+  .pill{border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--muted);transition:transform .13s ease}
+  .pill.ok{color:var(--sea);border-color:#2f5c53}
+  .pill.no{color:var(--wine);border-color:#5d3438}
+  .pill.pulse{transform:scale(1.16);background:var(--panel-2)}
+  .card.ok{border-color:var(--sea)}
+  .card.no{border-color:var(--wine)}
+  .dots{display:flex;gap:5px;margin-top:14px}
+  .dots i{width:6px;height:6px;border-radius:50%;background:var(--line);display:block}
+  .dots i.on{background:var(--sea)}
+  .fb{margin-top:12px;text-align:center;font-size:.95rem;min-height:1.3em}
+  .fb.ok{color:var(--sea)}
+  .fb.no{color:var(--wine)}
+  .fb b{font-family:var(--serif);font-size:1.15rem;font-weight:400}
+  .errbanner{
+    position:sticky;top:0;z-index:9;margin:10px 0;padding:12px 14px;
+    background:#3a2226;border:1px solid var(--wine);border-radius:11px;
+    color:#f3d7d7;font-size:.8rem;line-height:1.5;word-break:break-word;
+  }
+  .errbanner button{
+    margin-top:8px;background:none;border:1px solid var(--wine);color:#f3d7d7;
+    font:inherit;font-size:.78rem;padding:6px 10px;border-radius:8px;
+  }
+  .diag{
+    margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px;font-size:.8rem;color:var(--muted);line-height:1.55;
+  }
+  .diag b{color:var(--text);font-weight:600}
+  .diag ul{margin:6px 0 0;padding-left:18px}
+  .empty{text-align:center;color:var(--muted);padding:38px 10px;font-size:.9rem}
+
+  ul.list{list-style:none;padding:0;margin:12px 0 0}
+  ul.list li{
+    display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid var(--panel-2);
+  }
+  ul.list .w{flex:1;min-width:0}
+  ul.list .g{font-family:var(--serif);font-size:1.1rem}
+  ul.list .r{color:var(--muted);font-size:.82rem}
+  ul.list .dot{width:7px;height:7px;border-radius:50%;background:var(--line);flex:0 0 auto}
+  ul.list .dot.mid{background:var(--ochre)}
+  ul.list .dot.done{background:var(--sea)}
+  ul.list button{background:none;border:0;color:var(--muted);font-size:1.05rem;cursor:pointer;padding:6px}
+
+  .foot{margin-top:22px;display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:var(--muted)}
+  .foot button{background:none;border:0;color:var(--muted);font:inherit;text-decoration:underline;cursor:pointer;padding:4px}
+  .errbanner.nojs{position:static}
+  html:not(.js) .score,html:not(.js) .bar,html:not(.js) .barlabel,html:not(.js) .seg,html:not(.js) .foot{display:none}
+  .note{color:var(--muted);font-size:.78rem;margin-top:10px;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="errbanner nojs" id="nojs"><b>Здесь тренажёр не запустится.</b><br>
+    Встроенный просмотр файлов (например, Telegram на iPhone) не выполняет скрипты.<br>
+    Откройте файл в Safari или Chrome; на Android — скачанный файл в Chrome.</div>
+  <script>try{document.documentElement.classList.add("js");document.getElementById("nojs").remove()}catch(e){}</script>
+  <header>
+    <h1>Ελληνικά · Урок 18</h1>
+    <div class="sub" id="sub"></div>
+    <div class="bar"><i id="barfill"></i></div>
+    <div class="barlabel"><span id="barleft"></span><span id="barright"></span></div>
+    <div class="score">
+      <span class="pill ok" id="sOk">верно 0</span>
+      <span class="pill no" id="sNo">ошибок 0</span>
+      <span class="pill" id="sKnown">знаю 0</span>
+      <span class="pill" id="sLearn">учу 0</span>
+      <span class="pill" id="sNew">новых 0</span>
+    </div>
+  </header>
+
+  <nav class="seg" id="decks"></nav>
+  <nav class="seg" id="modes"></nav>
+
+  <main id="stage"></main>
+  <div id="diagbox"></div>
+
+  <div class="foot">
+    <button id="diagbtn">Проверить звук</button>
+    <button id="voicebtn"></button>
+    <button id="reset">Сбросить прогресс</button>
+  </div>
+</div>
+
+<script>
+/* ---------- показ ошибок прямо на экране (для устройств без консоли) ---------- */
+const ERRORS = [];
+function showErrors(){
+  let box = document.getElementById("errbanner");
+  if(!box){
+    box = document.createElement("div");
+    box.id = "errbanner"; box.className = "errbanner";
+    (document.querySelector(".wrap") || document.body).prepend(box);
+  }
+  box.innerHTML = "<b>Что-то сломалось:</b><br>" + ERRORS.join("<br>") +
+    "<br>" + navigator.userAgent;
+  const b = document.createElement("button");
+  b.textContent = "Скопировать текст ошибки";
+  b.onclick = ()=>{
+    const t = ERRORS.join("\n") + "\n" + navigator.userAgent;
+    if(navigator.clipboard) navigator.clipboard.writeText(t).then(()=>{ b.textContent = "Скопировано"; });
+    else { const a=document.createElement("textarea"); a.value=t; document.body.appendChild(a);
+           a.select(); document.execCommand("copy"); a.remove(); b.textContent = "Скопировано"; }
+  };
+  box.appendChild(b);
+}
+window.addEventListener("error", e=>{
+  ERRORS.push((e.message || "ошибка") + (e.lineno ? " · строка " + e.lineno : ""));
+  showErrors();
+});
+window.addEventListener("unhandledrejection", e=>{
+  ERRORS.push("промис: " + ((e.reason && e.reason.message) || e.reason));
+  showErrors();
+});
+</script>
+
+<script id="core">/* Чистое ядро тренажёра: никакого DOM, никакого модульного изменяемого
+ * состояния, всё через аргументы. Всякий потребитель случайности принимает
+ * `rnd` последним параметром — иначе поведение проверяется только статистикой.
+ *
+ * Живёт отдельным файлом ради тестов (`node --test tests/js/`). build.py вшивает
+ * его в собранный HTML, так что выход остаётся одним самодостаточным файлом:
+ * разделение существует для проверки, не для рантайма.
+ *
+ * Правило «столько-то верных подряд = выучено» раньше было записано в движке
+ * восемь раз. Смена порога требовала семи правок, и промах был бы молчаливым.
+ * Здесь у правила один дом: STREAK_LEARNED + isLearned().
+ */
+const GreekCore = (function () {
+
+  const STREAK_LEARNED = 3;          // верных подряд, после которых слово выучено
+  const STREAK_CAP = 4;              // выше не растим: серия — не счётчик заслуг
+  const WEIGHTS = [8, 5, 3, 2, 1];   // вес показа по длине серии; вне таблицы — 1
+  const MIN_DECK = 6;                // меньше — неправильные варианты берём из общего словаря
+  const OPTIONS_PER_QUESTION = 4;    // столько кнопок в тестовых режимах, включая верную
+  const NET_TIMEOUT_MS = 3500;       // сколько ждём интернет-голос до возврата к системному
+
+  /* ---------- словарь ---------- */
+
+  function buildWords(data, decks) {
+    const words = [];
+    for (const d of decks) {
+      if (!data[d.id]) continue;     // виртуальные наборы своего массива не имеют
+      for (const [gr, ru] of data[d.id]) words.push({ gr, ru, deck: d.id });
+    }
+    return words;
+  }
+
+  /* Стартовый набор берём из самих данных. Зашитый id ломается молча: набор не
+     находится, пул пуст, экран пустой, ошибок нет. Хвостовой `decks[0]` вернёт
+     набор, про который уже известно, что он пуст — приложение тогда честно
+     напишет «в этом наборе нет слов», а гейт сборки такой выход не пропустит. */
+  function pickStartDeck(data, decks) {
+    const withWords = decks.find(d => data[d.id] && data[d.id].length);
+    if (withWords) return withWords.id;
+    return decks.length ? decks[0].id : undefined;
+  }
+
+  /* ---------- прогресс ---------- */
+
+  function scoreOf(progress, gr) {
+    return progress[gr] || { s: 0, e: 0 };
+  }
+
+  function isLearned(entry) {
+    return entry.s >= STREAK_LEARNED;
+  }
+
+  function isErrorWord(entry) {
+    return entry.e > 0 && !isLearned(entry);
+  }
+
+  /* Возвращает НОВЫЙ прогресс, не трогая переданный: верный ответ удлиняет серию
+     до потолка, ошибка обнуляет её и увеличивает счётчик ошибок. Ошибка на
+     длинной серии стоит всей серии — решение исходного автора, закреплено тестом
+     намеренно, чтобы будущая правка была решением, а не случайностью. */
+  function markWord(progress, gr, ok) {
+    const p = scoreOf(progress, gr);
+    const next = ok
+      ? { s: Math.min(p.s + 1, STREAK_CAP), e: p.e }
+      : { s: 0, e: p.e + 1 };
+    return Object.assign({}, progress, { [gr]: next });
+  }
+
+  function weightFor(entry) {
+    return WEIGHTS[entry.s] || 1;
+  }
+
+  /* Три корзины шапки. Каждое слово попадает ровно в одну. */
+  function counts(pool, progress) {
+    let known = 0, learning = 0;
+    for (const w of pool) {
+      const p = scoreOf(progress, w.gr);
+      if (isLearned(p)) known++;
+      else if (p.s > 0 || p.e > 0) learning++;
+    }
+    return { known, learning, fresh: pool.length - known - learning };
+  }
+
+  /* ---------- наборы ---------- */
+
+  function deckWords(words, progress, deckId) {
+    if (deckId === "all") return words.slice();
+    if (deckId === "errors") return words.filter(w => isErrorWord(scoreOf(progress, w.gr)));
+    return words.filter(w => w.deck === deckId);
+  }
+
+  /* Артикли — один список на двоих: нормализацию ответа и подсказку «первая
+     буква». Раньше шаблон был записан дважды, в ядре и в движке; добавление
+     шестого артикля требовало двух правок, и промах был бы молчаливым. */
+  const LEADING_ARTICLE = /^(ο|η|το|τα|οι)\s+/;
+
+  /* ---------- сравнение ответа ---------- */
+
+  /* Порядок шагов значим: артикль снимается ПОСЛЕ схлопывания пробелов.
+     Пунктуация заменяется пробелом, поэтому «"ο άνθρωπος"» до схлопывания
+     начинается с пробела, якорь ^ не срабатывает, и ответ в кавычках или
+     скобках помечался неверным. */
+  const normalize = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^\u0370-\u03ffa-z\u03b1-\u03c9\s]/g, " ")
+    .replace(/\s+/g, " ").trim()
+    .replace(LEADING_ARTICLE, "").replace(/ς/g, "σ");
+
+  /* Подсказка русская, а русскому слову может отвечать несколько греческих
+     (рассчитывать = λογαριάζω / υπολογίζω). Все они — правильные ответы. */
+  function acceptedForms(word, words) {
+    const forms = words.filter(x => x.ru === word.ru).map(x => x.gr);
+    if (!forms.includes(word.gr)) forms.push(word.gr);
+    return forms;
+  }
+
+  function matches(input, word, words) {
+    const a = normalize(input);
+    if (!a) return false;
+    return acceptedForms(word, words)
+      .some(g => normalize(g) === a || g.split("/").some(v => normalize(v) === a));
+  }
+
+  /* ---------- выбор слов ---------- */
+
+  /* Детерминированная половина pickWord: корзина, из которой тянут. Вынесена
+     отдельно, чтобы вес проверялся составом корзины, а не выборкой. */
+  function weightedPool(pool, progress, lastGr) {
+    const weighted = [];
+    for (const w of pool) {
+      if (w.gr === lastGr && pool.length > 1) continue;
+      const weight = weightFor(scoreOf(progress, w.gr));
+      for (let i = 0; i < weight; i++) weighted.push(w);
+    }
+    return weighted;
+  }
+
+  function pickWord(pool, progress, lastGr, rnd = Math.random) {
+    const weighted = weightedPool(pool, progress, lastGr);
+    if (!weighted.length) return undefined;
+    return weighted[Math.floor(rnd() * weighted.length)];
+  }
+
+  /* Кандидаты в неправильные варианты. Исключаем и то же греческое слово, и тот
+     же перевод: синоним среди вариантов — правильный ответ, помеченный красным. */
+  function distractorPool(words, pool, word, minDeck = MIN_DECK) {
+    const base = pool.length < minDeck ? words : pool;
+    return base.filter(x => x.gr !== word.gr && x.ru !== word.ru);
+  }
+
+  /* Варианты не должны повторять перевод ни ответа, ни друг друга: два
+     одинаковых русских слова в списке — это выбор без правильного решения. */
+  function distractors(words, pool, word, n = 3, rnd = Math.random) {
+    const candidates = distractorPool(words, pool, word);
+    const taken = new Set([word.ru]);
+    const out = [];
+    while (out.length < n && candidates.length) {
+      const pick = candidates.splice(Math.floor(rnd() * candidates.length), 1)[0];
+      if (taken.has(pick.ru)) continue;
+      taken.add(pick.ru);
+      out.push(pick);
+    }
+    return out;
+  }
+
+  function shuffle(a, rnd = Math.random) {
+    return a.map(v => [rnd(), v]).sort((x, y) => x[0] - y[0]).map(v => v[1]);
+  }
+
+  /* ---------- хранилище ---------- */
+
+  /* Выбирается пробой, а не предположением о среде.
+     
+     Раньше первой веткой стояло `window.storage` — API, которого в контракте
+     артефактов не существует вовсе (проверено по контракту 0.2.46: доступны
+     artifact, assets, db, downloads, mcp, room, sample, self, все через
+     claude.use). Ветка была недостижима не потому, что её случай обрабатывает
+     кто-то другой, а потому, что описание среды в исходном задании было
+     неверным. localStorage работает и в артефакте, и в скачанном файле — это и
+     был рабочий путь всё время.
+     
+     Приватная вкладка не даёт ничего, и этот случай обязан быть ВИДЕН
+     вызывающему: молча потерянный прогресс выглядит как работающее приложение. */
+  function makeStore(env) {
+    try {
+      const ls = env && env.local;
+      const probe = "__store_probe__";
+      ls.setItem(probe, "1");
+      const echo = ls.getItem(probe);
+      ls.removeItem(probe);
+      if (echo === "1") return {
+        kind: "local", label: "память браузера",
+        get: async k => ls.getItem(k),
+        set: async (k, v) => { ls.setItem(k, v); },
+        del: async k => { ls.removeItem(k); }
+      };
+    } catch (e) { /* приватная вкладка или запрет записи — падаем в память */ }
+    const mem = Object.create(null);
+    return {
+      kind: "memory", label: "только на время вкладки",
+      get: async k => (k in mem ? mem[k] : null),
+      set: async (k, v) => { mem[k] = v; },
+      del: async k => { delete mem[k]; }
+    };
+  }
+
+  /* Проверка записи в обе стороны. Без чтения обратно «успешная» запись не
+     доказывает ничего: именно так прогресс терялся молча. */
+  async function verifyStore(store, key) {
+    if (store.kind === "memory") return null;
+    const probe = key + "__rw";
+    try {
+      await store.set(probe, "1");
+      const survived = await store.get(probe) === "1";
+      // Убрать, а не забить пустой строкой: иначе ключ живёт у пользователя
+      // вечно, и в хранилище артефакта копится лишняя строка на каждую загрузку.
+      await store.del(probe);
+      return survived ? null : "запись не сохраняется";
+    } catch (e) {
+      return "запись отклонена: " + (e.message || e);
+    }
+  }
+
+  async function loadProgress(store, key) {
+    let raw;
+    try {
+      raw = await store.get(key);
+    } catch (e) {
+      return { progress: {}, failure: "не удалось прочитать прогресс: " + (e.message || e) };
+    }
+    if (!raw) return { progress: {}, failure: null };
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      return { progress: {}, failure: "сохранённый прогресс испорчен и прочитан не был" };
+    }
+    /* Валидный JSON ещё не значит подходящий: сохранённое "null" разбирается
+       успешно, а первое же обращение к прогрессу роняет приложение насмерть —
+       пользователь видит красную плашку и не может ничего, пока не почистит
+       хранилище руками. Форма прогресса — часть контракта. */
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+      return { progress: {}, failure: "сохранённый прогресс испорчен и прочитан не был" };
+    }
+    return { progress: parsed, failure: null };
+  }
+
+  /* ---------- представление ---------- */
+
+  /* Вердикт отдаётся ЧАСТЯМИ, а не готовой разметкой. Раньше движок склеивал
+     "…<b>" + слово + "</b>…" и отдавал в innerHTML: слово с «<» или «&» ломало
+     разметку и частично исчезало с экрана. Части нельзя склеить обратно в
+     разметку — защита живёт в типе данных, а не в дисциплине вызывающего. */
+  function verdictText(ok, word, kind = "choice", entry = { s: 0, e: 0 }) {
+    const cls = ok ? "ok" : "no";
+    const greek = { tag: "b", text: word.gr };
+    const lead = text => ({ tag: "span", text });
+
+    if (kind === "typed") {
+      return { cls, parts: ok ? [lead("Верно · "), greek] : [lead("Правильно: "), greek] };
+    }
+    if (kind === "flash") {
+      // На верном ответе слово уже на экране, и полезнее число оставшихся
+      // повторов. Зажимаем нулём: потолок серии (4) выше порога «выучено» (3),
+      // поэтому разность умеет уходить в минус.
+      return ok
+        ? { cls, parts: [lead("Засчитано · осталось повторов: "
+            + Math.max(0, STREAK_LEARNED - entry.s))] }
+        : { cls, parts: [lead("Повторим позже · "), greek, lead(" — " + word.ru)] };
+    }
+    return {
+      cls,
+      parts: [lead(ok ? "Верно · " : "Неверно · "), greek, lead(" — " + word.ru)]
+    };
+  }
+
+  /* Класс точки в списке. Границы обязаны совпадать с counts(): список считал
+     слово начатым только по серии, а шапка — ещё и по ошибкам, поэтому слово с
+     одной ошибкой было «учу» вверху и «новым» в списке. */
+  function dotClass(entry) {
+    if (isLearned(entry)) return "done";
+    return (entry.s > 0 || entry.e > 0) ? "mid" : "";
+  }
+
+  /* Текст предупреждения о хранилище. Возвращается на КАЖДЫЙ вызов заново:
+     раньше баннер рисовался один раз и молчал о причине, появившейся позже. */
+  function volatileMessage(storeKind, storeFail) {
+    if (storeFail) {
+      // Сюда приходит и отказ ЧТЕНИЯ (испорченное сохранение), и отказ записи.
+      // Титуловать первое как «не сохраняется» — неправда: следующая запись
+      // пройдёт, а человек будет думать, что прогресс потерян.
+      const isReadFailure = /прочитан не был|не удалось прочитать/.test(storeFail);
+      return {
+        title: isReadFailure ? "Прежний прогресс не прочитан." : "Прогресс не сохраняется.",
+        body: storeFail
+      };
+    }
+    if (storeKind === "memory") {
+      return {
+        title: "Прогресс не сохранится.",
+        body: "Это окружение не даёт приложению никакого хранилища — счёт живёт "
+            + "до перезагрузки вкладки. Откройте файл в обычной вкладке Safari или Chrome."
+      };
+    }
+    return null;
+  }
+
+  const OPTION_MODES = ["gr2ru", "ru2gr", "audio"];   // режимы, где есть варианты
+  const PRIMARY_MODES = ["flash", "type"];            // режимы с кнопкой подтверждения
+
+  /* Что делать по клавише. Раньше четыре ветки проверялись подряд и не были
+     взаимоисключающими: цифры срабатывали в любом режиме (спасало лишь
+     отсутствие вариантов в DOM), а пробел на раскрытой карточке листал слово
+     МИМО ответа — оно не попадало ни в одну корзину. */
+  function keyAction({ key, mode, revealed = false, inInput = false }) {
+    const none = { type: "none" };
+    if (inInput) return none;                    // печатающему принадлежат все клавиши
+
+    if (key === " ") {
+      if (mode !== "flash") return none;
+      // На раскрытой карточке пробел не делает ничего: ответить можно только
+      // кнопкой, иначе слово уходит непосчитанным.
+      return revealed ? none : { type: "reveal" };
+    }
+    if (/^[1-9]$/.test(key)) {
+      if (!OPTION_MODES.includes(mode)) return none;
+      const index = Number(key) - 1;
+      return index < OPTIONS_PER_QUESTION ? { type: "option", index } : none;
+    }
+    if (key === "Enter") {
+      return PRIMARY_MODES.includes(mode) ? { type: "primary" } : none;
+    }
+    return none;
+  }
+
+  /* Первая буква самого слова: артикль — подсказка бесплатная, её не прячут. */
+  function firstLetterHint(gr) {
+    return gr.replace(LEADING_ARTICLE, "").slice(0, 1);
+  }
+
+  /* Что показать в шапке. Раньше проценты делились на защищённый знаменатель,
+     а печатался незащищённый — на пустом наборе выходило «выучено 0 из 0»
+     рядом с нулём процентов, посчитанным от единицы. */
+  function progressView(pool, progress, session) {
+    const { known, learning, fresh } = counts(pool, progress);
+    const total = pool.length;
+    return {
+      pct: total ? Math.round(100 * known / total) : 0,
+      leftText: `выучено ${known} из ${total}`,
+      rightText: session.total
+        ? `точность ${Math.round(100 * session.right / session.total)}%` : "",
+      pills: { ok: session.right, no: session.wrong, known, learning, fresh }
+    };
+  }
+
+  /* Именованные слоты отложенных действий. В движке было четыре независимых
+     таймера, а снимался один: переход к следующему слову. Отсюда и дефект —
+     нажатие «Дальше» раньше срока оставляло таймер в полёте, и он пролистывал
+     слово, которого человек не видел. Таймеры инъектируются, как в withTimeout. */
+  function makeScheduler(timers) {
+    /* Обёртки, а не ссылки: браузерные setTimeout/clearTimeout, положенные в
+       объект и вызванные как его методы, теряют контекст window и падают с
+       "Illegal invocation". В node этого не происходит, поэтому дефект виден
+       только в браузере — поймано прогоном 12.09. */
+    const T = timers || {
+      setTimeout: (fn, ms) => setTimeout(fn, ms),
+      clearTimeout: id => clearTimeout(id)
+    };
+    const slots = new Map();
+    const cancel = name => {
+      if (slots.has(name)) { T.clearTimeout(slots.get(name)); slots.delete(name); }
+    };
+    return {
+      after(name, fn, ms) {
+        cancel(name);
+        slots.set(name, T.setTimeout(() => { slots.delete(name); fn(); }, ms));
+      },
+      cancel,
+      cancelAll() { for (const name of [...slots.keys()]) cancel(name); }
+    };
+  }
+
+  /* ---------- выбор канала озвучки ---------- */
+
+  const VOICE_MODE_LABELS = { auto: "авто", net: "через интернет", sys: "голос устройства" };
+
+  /* Какой канал использовать. Предикат «греческого голоса нет» был записан в
+     движке ЧЕТЫРЕЖДЫ с разной полярностью — в выборе канала, в подсказке на
+     карточке, в подписи тумблера и в панели диагностики. Здесь он один. */
+  /* В «авто» сеть идёт первой (ADR-0020): её отказ виден — ошибка или таймаут, —
+     а немой системный синтез не сообщает ничего. Встроенный браузер Telegram
+     перечисляет греческий голос и молчит; прежнее правило «сначала голос
+     устройства» оставляло приложение немым без единого сигнала. */
+  function chooseChannel({ voiceMode, netOk, hasGreekVoice }) {
+    if (voiceMode === "net" || voiceMode === "sys") return voiceMode;   // ручной выбор сильнее
+    if (netOk !== false) return "net";
+    return hasGreekVoice ? "sys" : "silent";
+  }
+
+  function voiceLabel({ voiceMode, voiceName, netOk }) {
+    const base = "Озвучка: " + (VOICE_MODE_LABELS[voiceMode] || voiceMode);
+    if (voiceMode !== "auto") return base;
+    if (netOk !== false) return base + " · интернет";
+    return base + " · " + (voiceName || "греческого голоса нет");
+  }
+
+  /* Режим озвучки живёт под своим ключом рядом с прогрессом, а не внутри него:
+     переименовать ключ прогресса или поменять его форму значило бы стереть
+     людям выученное. Это удобство, а не данные, — отказ хранилища даёт «авто»,
+     а не ошибку на экране. */
+  const voiceModeKey = key => key + "-voice";
+
+  async function loadVoiceMode(store, key) {
+    try {
+      const raw = await store.get(voiceModeKey(key));
+      // hasOwnProperty, а не Object.hasOwn: встроенные браузеры на телефонах бывают старше ES2022.
+      return Object.prototype.hasOwnProperty.call(VOICE_MODE_LABELS, raw) ? raw : "auto";
+    } catch (e) {
+      return "auto";
+    }
+  }
+
+  async function saveVoiceMode(store, key, mode) {
+    try {
+      await store.set(voiceModeKey(key), mode);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function pickGreekVoice(voices) {
+    return (voices || []).find(v => /^el/i.test(v.lang)) || null;
+  }
+
+  /* ---------- озвучка ---------- */
+
+  /* Гонка подписки против таймера. Эндпоинт умеет не отвечать вовсе: ни canplay,
+     ни error. Без таймера промис висит, и автовозврата на системный голос не
+     происходит — приложение просто молчит. Таймеры инъектируются, чтобы это
+     проверялось тестом, а не секундомером. */
+  function withTimeout(subscribe, ms, timers) {
+    /* Обёртки, а не ссылки: браузерные setTimeout/clearTimeout, положенные в
+       объект и вызванные как его методы, теряют контекст window и падают с
+       "Illegal invocation". В node этого не происходит, поэтому дефект виден
+       только в браузере — поймано прогоном 12.09. */
+    const T = timers || {
+      setTimeout: (fn, ms) => setTimeout(fn, ms),
+      clearTimeout: id => clearTimeout(id)
+    };
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const once = fn => v => {
+        if (settled) return;
+        settled = true;
+        T.clearTimeout(timer);
+        fn(v);
+      };
+      const ok = once(resolve);
+      const fail = once(reject);
+      const timer = T.setTimeout(
+        () => fail(new Error("интернет-голос не ответил за " + (ms / 1000) + " с")), ms);
+      subscribe(ok, fail);
+    });
+  }
+
+  /* Синтезу отдаём одну форму без пояснения в скобках. */
+  function speakableText(text) {
+    return text.split("/")[0].replace(/\(.*?\)/g, "").trim();
+  }
+
+  return {
+    STREAK_LEARNED, STREAK_CAP, WEIGHTS, MIN_DECK, NET_TIMEOUT_MS,
+    buildWords, pickStartDeck, deckWords,
+    scoreOf, markWord, isLearned, isErrorWord, counts, weightFor,
+    normalize, acceptedForms, matches,
+    verdictText, dotClass, keyAction, OPTIONS_PER_QUESTION,
+    volatileMessage,
+    chooseChannel, voiceLabel, pickGreekVoice, loadVoiceMode, saveVoiceMode,
+    progressView, makeScheduler,
+    firstLetterHint,
+    weightedPool, pickWord, distractorPool, distractors, shuffle,
+    makeStore, verifyStore, loadProgress,
+    withTimeout, speakableText
+  };
+})();
+
+/* Хвост для node: в браузере `module` не определён и строка не исполняется. */
+if (typeof module !== "undefined" && module.exports) module.exports = GreekCore;
+</script>
+
+<script>
+const DATA = {
+  "d01": [
+    [
+      "ο αγκώνας",
+      "локоть"
+    ],
+    [
+      "η παλάμη",
+      "ладонь"
+    ],
+    [
+      "ο παθολόγος",
+      "терапевт"
+    ],
+    [
+      "ο ορθοπαιδικός",
+      "ортопед, травматолог"
+    ],
+    [
+      "ο οφθαλμίατρος",
+      "окулист"
+    ],
+    [
+      "ο ωτορινολαρυγγολόγος (ωριλά)",
+      "ухо-горло-нос"
+    ],
+    [
+      "ο γυναικολόγος",
+      "гинеколог"
+    ],
+    [
+      "ο παιδίατρος",
+      "педиатр"
+    ],
+    [
+      "ο ακτινολόγος",
+      "рентгенолог"
+    ],
+    [
+      "ο δερματολόγος",
+      "дерматолог"
+    ],
+    [
+      "ο μικροβιολόγος",
+      "микробиолог"
+    ],
+    [
+      "ο καρδιολόγος",
+      "кардиолог"
+    ],
+    [
+      "ο χειρουργός",
+      "хирург"
+    ],
+    [
+      "ο ψυχίατρος",
+      "психиатр"
+    ],
+    [
+      "ο ομοιοπαθητικός",
+      "гомеопат"
+    ],
+    [
+      "κρυωμένος",
+      "простуженный"
+    ],
+    [
+      "κρυώνω",
+      "чувствовать холод"
+    ],
+    [
+      "το κρυολόγημα",
+      "простуда"
+    ],
+    [
+      "η γρίπη",
+      "грипп"
+    ],
+    [
+      "τα δέκατα",
+      "не очень высокая температура"
+    ],
+    [
+      "το συνάχι",
+      "насморк"
+    ],
+    [
+      "ο βήχας",
+      "кашель"
+    ],
+    [
+      "βήχω",
+      "кашлять"
+    ],
+    [
+      "φτερνίζομαι",
+      "чихать"
+    ],
+    [
+      "το ρίγος",
+      "озноб"
+    ],
+    [
+      "η ζάλη",
+      "головокружение"
+    ],
+    [
+      "ζαλίζομαι",
+      "испытывать головокружение"
+    ],
+    [
+      "το θερμόμετρο",
+      "термометр"
+    ],
+    [
+      "τα ούρα",
+      "моча"
+    ],
+    [
+      "η αντιβίωση (τα αντιβιοτικά)",
+      "антибиотик"
+    ],
+    [
+      "το σιρόπι",
+      "сироп"
+    ],
+    [
+      "τα αντιπυρετικά",
+      "жаропонижающее"
+    ],
+    [
+      "το εμβόλιο",
+      "прививка"
+    ],
+    [
+      "το κολλύριο",
+      "капли (для глаз)"
+    ],
+    [
+      "η αλοιφή",
+      "мазь"
+    ],
+    [
+      "η καρδιά",
+      "сердце"
+    ],
+    [
+      "η φαγούρα",
+      "зуд"
+    ],
+    [
+      "η ακτινογραφία",
+      "рентгеновский снимок"
+    ],
+    [
+      "η αναπνοή",
+      "дыхание"
+    ],
+    [
+      "βαθύς",
+      "глубокий"
+    ],
+    [
+      "η βρογχίτιδα",
+      "бронхит"
+    ],
+    [
+      "αλλεργικός",
+      "аллергичный"
+    ],
+    [
+      "ο πονόλαιμος",
+      "боль в горле"
+    ],
+    [
+      "Περαστικά!",
+      "Поправляйтесь!"
+    ]
+  ],
+  "d02": [
+    [
+      "οφείλω",
+      "должен"
+    ],
+    [
+      "ο ελέφαντας",
+      "слон"
+    ],
+    [
+      "το χάπι",
+      "таблетка"
+    ],
+    [
+      "χαμογελαστός",
+      "улыбчивый"
+    ],
+    [
+      "φοβισμένος",
+      "испуганный"
+    ],
+    [
+      "η εξαγωγή",
+      "удаление (зуба), экспорт"
+    ],
+    [
+      "τρέμω",
+      "дрожать"
+    ],
+    [
+      "το σπυράκι",
+      "прыщ"
+    ],
+    [
+      "η κοκκινίλα",
+      "покраснение"
+    ],
+    [
+      "χλιαρός",
+      "теплый"
+    ],
+    [
+      "αλλιώς",
+      "иначе"
+    ],
+    [
+      "διανυκτερεύω",
+      "дежурить ночью (заведение)"
+    ],
+    [
+      "τα εξωτερικά ιατρεία",
+      "поликлиника"
+    ],
+    [
+      "εφημερεύω",
+      "дежурить сутки"
+    ],
+    [
+      "τα επείγοντα",
+      "отделение скорой помощи"
+    ],
+    [
+      "ο καπνός",
+      "табак, дым"
+    ],
+    [
+      "βλάπτω",
+      "вредить"
+    ],
+    [
+      "πάντως",
+      "в любом случае"
+    ],
+    [
+      "η αρθρίτιδα",
+      "артрит"
+    ],
+    [
+      "το άσθμα",
+      "астма"
+    ],
+    [
+      "η επιληψία",
+      "эпилепсия"
+    ],
+    [
+      "λαχανιάζω",
+      "запыхаться"
+    ],
+    [
+      "η πάροδος",
+      "переулок"
+    ],
+    [
+      "η τουλίπα",
+      "тюльпан"
+    ],
+    [
+      "η μαρμελάδα",
+      "джем"
+    ],
+    [
+      "ο σεισμός",
+      "землетрясение"
+    ],
+    [
+      "ασφαλώς",
+      "безусловно"
+    ],
+    [
+      "ελβετικός",
+      "швейцарский"
+    ],
+    [
+      "το είδος",
+      "вид"
+    ],
+    [
+      "το εργαλείο",
+      "инструмент"
+    ],
+    [
+      "η εθνική (ομάδα)",
+      "сборная"
+    ],
+    [
+      "ανήκω",
+      "принадлежать"
+    ],
+    [
+      "η διατροφή",
+      "питание"
+    ],
+    [
+      "εξαρτάται / εξαρτώνται",
+      "зависит / зависят"
+    ],
+    [
+      "η ποικιλία",
+      "ассортимент, выбор"
+    ],
+    [
+      "η φράση",
+      "фраза"
+    ],
+    [
+      "η τρύπα",
+      "дыра"
+    ],
+    [
+      "το ταγέρ",
+      "костюм (женский)"
+    ],
+    [
+      "ο αλήτης",
+      "бродяга, хулиган"
+    ],
+    [
+      "το χτύπημα",
+      "удар"
+    ],
+    [
+      "γλυτώνω",
+      "спастись, избежать чего-либо плохого"
+    ],
+    [
+      "απλώνω",
+      "развешивать, раскладывать"
+    ],
+    [
+      "η ευχέρεια",
+      "возможность"
+    ],
+    [
+      "η βελόνα",
+      "игла"
+    ],
+    [
+      "η κλωστή",
+      "нитка"
+    ],
+    [
+      "το κουμπί",
+      "пуговица"
+    ],
+    [
+      "η έπαυλη",
+      "особняк"
+    ],
+    [
+      "το λαχείο",
+      "лотерейный билет"
+    ],
+    [
+      "η δεξίωση",
+      "банкет"
+    ],
+    [
+      "τα ακουστικά",
+      "наушники, аппарат для улучшения слуха"
+    ],
+    [
+      "το γιοτ",
+      "яхта"
+    ],
+    [
+      "ο προγραμματιστής",
+      "программист"
+    ],
+    [
+      "η ανακαίνιση",
+      "ремонт"
+    ]
+  ],
+  "d03": [
+    [
+      "αποτελεσματικός",
+      "эффективный"
+    ],
+    [
+      "παχυντικός",
+      "калорийный"
+    ],
+    [
+      "εργατικός",
+      "трудолюбивый"
+    ],
+    [
+      "εργατικός, εργάσιμος",
+      "рабочий"
+    ],
+    [
+      "φρόνιμος",
+      "послушный"
+    ],
+    [
+      "ωφέλιμος",
+      "полезный"
+    ],
+    [
+      "κουραστικός",
+      "утомительный"
+    ],
+    [
+      "μορφωμένος",
+      "образованный"
+    ],
+    [
+      "πονηρός",
+      "хитрый"
+    ],
+    [
+      "προσεκτικός",
+      "внимательный"
+    ],
+    [
+      "ισχυρός",
+      "мощный"
+    ],
+    [
+      "έμπειρος",
+      "опытный"
+    ],
+    [
+      "απαιτητικός",
+      "требовательный"
+    ],
+    [
+      "σπάνιος",
+      "редкий"
+    ],
+    [
+      "ταλαντούχος",
+      "талантливый"
+    ],
+    [
+      "λογικός",
+      "разумный"
+    ],
+    [
+      "χαζός",
+      "глупый"
+    ],
+    [
+      "διάσημος",
+      "известный"
+    ],
+    [
+      "προηγούμενος",
+      "предыдущий"
+    ],
+    [
+      "αληθινός",
+      "настоящий"
+    ],
+    [
+      "χρηματικός",
+      "денежный"
+    ],
+    [
+      "μοναδικός",
+      "единственный"
+    ],
+    [
+      "γειτονικός, διπλανός",
+      "соседний"
+    ],
+    [
+      "ντόπιος, τοπικός, εγχώριος",
+      "местный"
+    ],
+    [
+      "ανδρικός",
+      "мужской"
+    ],
+    [
+      "γυναικείος",
+      "женский"
+    ],
+    [
+      "κρατικός",
+      "государственный"
+    ],
+    [
+      "κυβερνητικός",
+      "правительственный"
+    ],
+    [
+      "ευρύχωρος",
+      "просторный"
+    ],
+    [
+      "λεπτός",
+      "тонкий"
+    ],
+    [
+      "οξύς, καυτερός, κοφτερός, αιχμηρός",
+      "острый"
+    ],
+    [
+      "πολύτιμος",
+      "драгоценный"
+    ],
+    [
+      "δοξασμένος, ξακουστός, ένδοξος",
+      "прославленный"
+    ],
+    [
+      "πρωτότυπος, ασυνήθιστος",
+      "оригинальный"
+    ],
+    [
+      "απαίσιος",
+      "отвратительный"
+    ],
+    [
+      "πολύπλοκος, περίπλοκος",
+      "запутанный"
+    ],
+    [
+      "σεμνός",
+      "скромный"
+    ],
+    [
+      "δραστήριος, ενεργός",
+      "активный"
+    ],
+    [
+      "άξιος",
+      "достойный"
+    ],
+    [
+      "άδειος, κενός",
+      "пустой"
+    ]
+  ],
+  "d04": [
+    [
+      "στενός",
+      "узкий"
+    ],
+    [
+      "πυκνός, πηκτός",
+      "густой"
+    ],
+    [
+      "βολικός, άνετος, αναπαυτικός",
+      "удобный"
+    ],
+    [
+      "υπόλοιπος",
+      "остальной"
+    ],
+    [
+      "υπεύθυνος",
+      "ответственный"
+    ],
+    [
+      "ανεύθυνος",
+      "безответственный"
+    ],
+    [
+      "παράξενος, περίεργος",
+      "странный"
+    ],
+    [
+      "επιπόλαιος",
+      "легкомысленный"
+    ],
+    [
+      "ευχάριστος",
+      "приятный"
+    ],
+    [
+      "ενθουσιασμένος",
+      "восторженный"
+    ],
+    [
+      "φυσικός",
+      "природный"
+    ],
+    [
+      "αμέτρητος",
+      "бесчисленный"
+    ],
+    [
+      "πρώην",
+      "бывший"
+    ],
+    [
+      "ορεινός",
+      "горный"
+    ],
+    [
+      "κατοικήσιμος",
+      "обитаемый"
+    ],
+    [
+      "κρυφός",
+      "тайный"
+    ],
+    [
+      "πολιτιστικός, πολιτισμένος",
+      "культурный"
+    ],
+    [
+      "ασημένιος, αργυρός",
+      "серебряный"
+    ],
+    [
+      "ύποπτος",
+      "подозрительный"
+    ],
+    [
+      "καλλιτεχνικός",
+      "художественный"
+    ],
+    [
+      "σπουδαίος, σημαντικός",
+      "значительный"
+    ],
+    [
+      "πνευματικός",
+      "духовный"
+    ],
+    [
+      "διοικητικός",
+      "административный"
+    ],
+    [
+      "οικονομικός",
+      "экономический"
+    ],
+    [
+      "περιορισμένος",
+      "ограниченный"
+    ],
+    [
+      "πολιτικός",
+      "политический"
+    ],
+    [
+      "ιδιαίτερος",
+      "особый"
+    ],
+    [
+      "ειδικός",
+      "специальный"
+    ],
+    [
+      "άριστος",
+      "отличный"
+    ],
+    [
+      "διαφορετικός",
+      "различный"
+    ],
+    [
+      "γενικός",
+      "генеральный"
+    ],
+    [
+      "εύθυμος, χαρωπός, χαρούμενος",
+      "веселый"
+    ],
+    [
+      "άγνωστος",
+      "незнакомый"
+    ],
+    [
+      "λερωμένος, βρώμικος",
+      "грязный"
+    ],
+    [
+      "επιστημονικός",
+      "научный"
+    ],
+    [
+      "άγριος",
+      "дикий"
+    ],
+    [
+      "νυχτερινός",
+      "ночной"
+    ],
+    [
+      "κοινός",
+      "общий"
+    ],
+    [
+      "ευσυνείδητος",
+      "сознательный"
+    ],
+    [
+      "επαγγελματικός",
+      "профессиональный"
+    ]
+  ]
+};
+const DECKS = [
+  {
+    "id": "d01",
+    "name": "Тело, врачи, симптомы, лекарства"
+  },
+  {
+    "id": "d02",
+    "name": "Больница и остальная лексика главы"
+  },
+  {
+    "id": "d03",
+    "name": "Прилагательные · часть 1"
+  },
+  {
+    "id": "d04",
+    "name": "Прилагательные · часть 2"
+  },
+  {
+    "id": "all",
+    "name": "Всё вместе"
+  },
+  {
+    "id": "errors",
+    "name": "Мои ошибки"
+  }
+];
+
+const MODES = [
+  {id:"flash", name:"Карточки"},
+  {id:"gr2ru", name:"Греч. → рус."},
+  {id:"ru2gr", name:"Рус. → греч."},
+  {id:"audio", name:"На слух"},
+  {id:"type",  name:"Написать"},
+  {id:"list",  name:"Список"}
+];
+
+const WORDS = GreekCore.buildWords(DATA, DECKS);
+/* Тонкие обёртки: связывают модульное состояние приложения с чистым ядром.
+   Правила живут в core.js, здесь только подстановка текущего прогресса. */
+const poolFor = id => GreekCore.deckWords(WORDS, progress, id);
+const st = w => GreekCore.scoreOf(progress, w.gr);
+
+/* Стартовый набор берём из самих данных. Зашитый id ломается молча:
+   набор не находится, пул пуст, экран пустой, ошибок нет. */
+let state = {deck: GreekCore.pickStartDeck(DATA, DECKS), mode:"flash"};
+let progress = {};          // gr -> {s: streak, e: errors}
+let session = {right:0, wrong:0, total:0};
+let current = null, lastGr = null, revealed = false;
+
+/* ---------- storage ---------- */
+const KEY = "greek-u18-progress";
+
+/* Само ОБРАЩЕНИЕ к localStorage умеет бросить SecurityError — в песочном
+   iframe без allow-same-origin. Без этого try весь скрипт обрывался бы на месте:
+   ни DATA, ни render, пустая страница. Адаптер внутри пробует среду, но защита
+   бесполезна, если до неё не доходит вызов. */
+let localBackend = null;
+try{ localBackend = localStorage; }catch(e){ localBackend = null; }
+const Store = GreekCore.makeStore({ local: localBackend });
+let storeFail = null;   // текст последней неудачной записи, если была
+
+async function load(){
+  const loaded = await GreekCore.loadProgress(Store, KEY);
+  progress = loaded.progress;
+  voiceMode = await GreekCore.loadVoiceMode(Store, KEY);
+  storeFail = loaded.failure || await GreekCore.verifyStore(Store, KEY);
+  warnIfVolatile();
+}
+function save(){
+  sched.after("save", async()=>{
+    try{ await Store.set(KEY, JSON.stringify(progress)); storeFail = null; }
+    catch(e){ storeFail = "прогресс не записался: " + (e.message || e); }
+    // Обе ветки: баннер должен не только появляться, но и уходить, когда запись
+    // снова заработала. Раньше он чинился только в сторону появления.
+    warnIfVolatile();
+    paintDiag();
+  }, 400);
+}
+/* Запись отложена на 400 мс. На телефоне человек отвечает и тут же уводит
+   приложение в фон или закрывает вкладку — и эти ответы пропадают. Ровно та
+   молчаливая потеря прогресса, ради которой переделывалось хранилище. */
+function flushNow(){
+  /* Запись асинхронна, а страница уже уходит — дождаться нельзя. Но молчать об
+     отказе тоже нельзя: раньше пустой catch глотал ошибку, не выставляя
+     storeFail, в отличие от save(). Причина доживёт до следующего открытия. */
+  sched.cancel("save");
+  const fail = e => {
+    storeFail = "прогресс не записался при уходе со страницы: " + (e.message || e);
+    try{ localStorage.setItem(KEY + "__lastError", storeFail); }catch(_){}
+  };
+  try{
+    const p = Store.set(KEY, JSON.stringify(progress));
+    if(p && p.catch) p.catch(fail);
+  }catch(e){ fail(e); }
+}
+document.addEventListener("visibilitychange", ()=>{ if(document.hidden) flushNow(); });
+window.addEventListener("pagehide", flushNow);
+
+function warnIfVolatile(){
+  /* Идемпотентность раньше делалась по наличию узла, и баннер больше никогда не
+     обновлялся: причина, появившаяся позже (отказ записи в работе), на экран не
+     попадала. Теперь узел переиспользуется, а текст берётся заново. */
+  const message = GreekCore.volatileMessage(Store.kind, storeFail);
+  const existing = document.getElementById("volatile");
+  if(!message){ if(existing) existing.remove(); return; }
+  const n = existing || document.createElement("div");
+  n.id = "volatile"; n.className = "errbanner";
+  n.replaceChildren(txt("b", null, message.title),
+                    document.createElement("br"),
+                    txt("span", null, message.body));
+  if(!existing) (document.querySelector(".wrap") || document.body).prepend(n);
+}
+function mark(w, ok){
+  progress = GreekCore.markWord(progress, w.gr, ok);
+  session.total++; if(ok) session.right++; else session.wrong++;
+  save(); paintProgress(); pulse(ok);
+}
+function pulse(ok){
+  const pill = document.getElementById(ok ? "sOk" : "sNo");
+  if(!pill) return;
+  pill.classList.add("pulse");
+  // Слот по id пилюли: общий слот снимал таймер предыдущей, и класс на ней
+  // оставался до конца сессии.
+  sched.after("pulse:" + pill.id, ()=>pill.classList.remove("pulse"), 320);
+}
+function flashCard(ok){
+  const c = document.querySelector(".card");
+  if(c) c.classList.add(ok ? "ok" : "no");
+}
+function dots(w){
+  const d = el("div","dots");
+  for(let i=0;i<GreekCore.STREAK_LEARNED;i++) d.appendChild(el("i", st(w).s > i ? "on" : null));
+  d.title = "три верных ответа подряд — слово выучено";
+  return d;
+}
+
+/* ---------- speech ---------- */
+const SS = (typeof window !== "undefined" && "speechSynthesis" in window) ? window.speechSynthesis : null;
+let voice = null;
+function pickVoice(){
+  if(!SS) return;
+  try{
+    voice = GreekCore.pickGreekVoice(SS.getVoices());
+  }catch(e){ voice = null; }
+}
+if(SS){
+  pickVoice();
+  SS.onvoiceschanged = ()=>{ pickVoice(); paintVoice(); };
+}
+let voiceMode = "auto";   // auto | net | sys; сохранённый выбор подставляет load()
+let netOk = null;         // null = не проверяли, true/false = результат
+const netAudio = new Audio();
+netAudio.preload = "auto";
+
+let unlocked = false;      // iOS/Android разрешают речь только после касания
+let lastEvent = "ещё не пробовали";
+function unlock(){
+  if(unlocked) return;
+  unlocked = true;
+  if(SS){
+    try{
+      const w = new SpeechSynthesisUtterance(" ");
+      w.volume = 0; SS.speak(w);
+    }catch(e){}
+    pickVoice();
+  }
+  paintVoice();
+}
+document.addEventListener("pointerdown", unlock, {once:true});
+document.addEventListener("keydown", unlock, {once:true});
+
+function sysSpeak(text){
+  if(!SS){ lastEvent = "в этой оболочке нет синтеза речи"; paintDiag(); return false; }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "el-GR"; u.rate = .82;
+  if(voice) u.voice = voice;
+  u.onstart = ()=>{ lastEvent = "речь пошла (" + (voice ? voice.name : "голос по умолчанию") + ")"; paintDiag(); };
+  u.onend   = ()=>{ paintDiag(); };
+  u.onerror = e =>{ lastEvent = "ошибка речи: " + (e.error || "неизвестно"); paintDiag(); };
+  SS.cancel();
+  SS.speak(u);
+  return true;
+}
+const TTS_URL = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=el&q=";
+let netRequestId = 0;
+function netSpeak(text){
+  /* Элемент <audio> один на всё приложение, поэтому второй запрос отбирает у
+     первого обработчики. Осиротевший промис мог дожить только до собственного
+     таймаута и тогда объявлял интернет-голос заблокированным — при рабочей
+     сети. Без системного греческого голоса приложение после этого умолкало
+     совсем. Сценарий обычный: режим «На слух» озвучивает сам, человек жмёт 🔊
+     чтобы повторить. */
+  const id = ++netRequestId;
+  return GreekCore.withTimeout((ok, fail)=>{
+    const mine = fn => (...args)=>{ if(id === netRequestId) fn(...args); };
+    netAudio.onerror  = mine(()=>fail(new Error("audio error")));
+    netAudio.oncanplay = mine(()=>ok());
+    netAudio.src = TTS_URL + encodeURIComponent(text);
+    const p = netAudio.play();
+    if(p && p.catch) p.catch(mine(fail));
+  }, GreekCore.NET_TIMEOUT_MS);
+}
+function speak(text, manual){
+  if(!unlocked && !manual) return;          // без касания система всё равно промолчит
+  if(manual) unlock();
+  const clean = GreekCore.speakableText(text);
+  const channel = GreekCore.chooseChannel({voiceMode, netOk, hasGreekVoice: !!voice});
+  if(channel === "silent"){ lastEvent = "греческого голоса нет ни в системе, ни в сети"; paintDiag(); return; }
+  if(channel === "net"){
+    netSpeak(clean)
+      .then(()=>{ netOk = true; lastEvent = "звук из интернета проигрался"; paintVoice(); paintDiag(); })
+      .catch(()=>{ netOk = false; lastEvent = "интернет-голос заблокирован"; paintVoice();
+                   if(!sysSpeak(clean)) paintDiag(); });
+  } else {
+    sysSpeak(clean);
+  }
+}
+function paintVoice(){
+  const b = document.getElementById("voicebtn");
+  if(!b) return;
+  b.textContent = GreekCore.voiceLabel({voiceMode, voiceName: voice && voice.name, netOk});
+}
+
+/* ---------- helpers ---------- */
+const el = (tag, cls, html) => { const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; };
+/* Слово из словаря — ТЕКСТ, а не разметка. Через innerHTML пара, содержащая
+   "<" или "&", отрендерилась бы как тег, и часть слова исчезла бы с экрана
+   молча, — а TSV пополняется внешними выгрузками. */
+const txt = (tag, cls, text) => { const e=document.createElement(tag); if(cls)e.className=cls; e.textContent=text; return e; };
+/* Вердикт рисуется ЧАСТЯМИ из ядра. Склеить их обратно в разметку негде —
+   поэтому слово с "<" или "&" физически не может попасть в innerHTML. */
+function paintVerdict(node, baseClass, ok, w, kind, entry){
+  const v = GreekCore.verdictText(ok, w, kind, entry);
+  node.className = baseClass + " " + v.cls;
+  node.replaceChildren(...v.parts.map(part => txt(part.tag, null, part.text)));
+}
+
+/* ---------- chrome ---------- */
+function buildSeg(node, items, key){
+  node.innerHTML="";
+  for(const it of items){
+    const b = el("button", null, it.name);
+    b.setAttribute("aria-pressed", state[key]===it.id);
+    b.onclick = ()=>{ state[key]=it.id; lastGr=null; buildSeg(node,items,key); render(); paintProgress(); };
+    node.appendChild(b);
+  }
+}
+function paintProgress(){
+  // Шкала «Мои ошибки» намеренно считается по всему словарю: набор ошибок
+  // тает по мере обучения, и прогресс по нему прыгал бы вверх от успехов.
+  const pool = state.deck==="errors" ? poolFor("all") : poolFor(state.deck);
+  const v = GreekCore.progressView(pool, progress, session);
+  document.getElementById("barfill").style.width = v.pct + "%";
+  document.getElementById("barleft").textContent  = v.leftText;
+  document.getElementById("barright").textContent = v.rightText;
+  document.getElementById("sOk").textContent    = "верно " + v.pills.ok;
+  document.getElementById("sNo").textContent    = "ошибок " + v.pills.no;
+  document.getElementById("sKnown").textContent = "знаю " + v.pills.known;
+  document.getElementById("sLearn").textContent = "учу " + v.pills.learning;
+  document.getElementById("sNew").textContent   = "новых " + v.pills.fresh;
+}
+
+/* ---------- modes ---------- */
+const stage = ()=>document.getElementById("stage");
+
+/* Один планировщик на все отложенные действия. Раньше их было четыре —
+   переход к слову, пульс счётчика, перерисовка диагностики и запись прогресса —
+   а снимался только первый. Смена экрана гасит всё, что относится к экрану. */
+const sched = GreekCore.makeScheduler();
+const later = (fn, ms) => sched.after("next", fn, ms);
+
+function render(){
+  sched.cancel("next");
+  stage().innerHTML="";
+  if(!poolFor(state.deck).length){
+    stage().appendChild(el("div","empty", state.deck==="errors"
+      ? "Здесь копятся слова, в которых вы ошиблись. Пока пусто."
+      : "В этом наборе нет слов."));
+    return;
+  }
+  if(state.mode==="list") return renderList();
+  current = GreekCore.pickWord(poolFor(state.deck), progress, lastGr);
+  lastGr = current.gr; revealed = false;
+  ({flash:renderFlash, gr2ru:renderChoice, ru2gr:renderChoice, audio:renderChoice, type:renderType})[state.mode]();
+}
+function next(){ render(); }
+
+function speakBtn(text){
+  const b = el("button","speak","🔊");
+  b.setAttribute("aria-label","Прослушать");
+  b.onclick = e=>{ e.stopPropagation(); speak(text, true); };
+  return b;
+}
+
+function renderFlash(){
+  const w = current;
+  const card = el("div","card");
+  card.appendChild(txt("div","prompt-gr", w.gr));
+  card.appendChild(speakBtn(w.gr));
+  const ans = el("div","answer","");
+  ans.style.visibility="hidden";
+  ans.textContent = w.ru;
+  card.appendChild(ans);
+  card.appendChild(dots(w));
+  const hint = el("div","hint","нажмите на карточку или пробел");
+  card.appendChild(hint);
+  card.onclick = ()=>{ ans.style.visibility="visible"; hint.textContent=""; revealed=true; };
+  stage().appendChild(card);
+
+  const row = el("div","row");
+  const no = el("button","btn","Ещё не знаю");
+  const yes = el("button","btn primary","Знаю");
+  const fb = el("div","fb");
+  const finish = ok=>{
+    ans.style.visibility="visible";
+    no.disabled = yes.disabled = true;
+    mark(w, ok); flashCard(ok);
+    paintVerdict(fb, "fb", ok, w, "flash", st(w));
+    if(!ok) speak(w.gr);
+    later(next, ok ? 550 : 1500);
+  };
+  no.onclick = ()=>finish(false);
+  yes.onclick = ()=>finish(true);
+  row.append(no,yes);
+  stage().append(row, fb);
+  speak(w.gr);
+}
+
+function renderChoice(){
+  const w = current;
+  const askGreek = state.mode==="ru2gr";           // выбираем греческое слово
+  const key = askGreek ? "gr" : "ru";
+  const opts = GreekCore.shuffle([w, ...GreekCore.distractors(WORDS, poolFor(state.deck), w)]);
+
+  const card = el("div","card");
+  if(state.mode==="audio"){
+    card.appendChild(el("div","prompt-ru","Что вы слышите?"));
+    card.appendChild(speakBtn(w.gr));
+    if(GreekCore.chooseChannel({voiceMode, netOk, hasGreekVoice: !!voice}) === "silent")
+      card.appendChild(el("div","hint","греческий голос недоступен — переключите озвучку внизу страницы"));
+  } else if(askGreek){
+    card.appendChild(txt("div","prompt-ru", w.ru));
+  } else {
+    card.appendChild(txt("div","prompt-gr", w.gr));
+    card.appendChild(speakBtn(w.gr));
+  }
+  stage().appendChild(card);
+
+  const box = el("div","opts");
+  opts.forEach((o,i)=>{
+    const b = el("button", "opt"+(askGreek?" gr":""));
+    b.append(el("span","n",String(i+1)), txt("span",null,o[key]));
+    b._opt = o;
+    b.onclick = ()=>choose(b, box, o===w, w, key);
+    box.appendChild(b);
+  });
+  const fb = el("div","fb");
+  stage().append(box, fb);
+  if(state.mode==="audio") speak(w.gr);
+}
+
+function choose(btn, box, ok, w, key){
+  if(btn.disabled) return;
+  [...box.children].forEach(b=>{
+    b.disabled = true;
+    if(b._opt === w) b.classList.add("right");
+  });
+  if(!ok) btn.classList.add("wrong");
+  mark(w, ok); flashCard(ok);
+  const fb = document.querySelector(".fb");
+  paintVerdict(fb, "fb", ok, w, "choice");
+  if(ok){ later(next, 900); }
+  else {
+    speak(w.gr);
+    const row = el("div","row");
+    const b = el("button","btn primary","Дальше");
+    b.onclick = next; row.appendChild(b);
+    stage().appendChild(row);
+    b.focus();
+  }
+}
+
+function renderType(){
+  const w = current;
+  const card = el("div","card");
+  card.appendChild(txt("div","prompt-ru", w.ru));
+  card.appendChild(el("div","hint","напишите по-гречески · ударения можно не ставить"));
+  stage().appendChild(card);
+
+  const inp = el("input"); inp.type="text"; inp.autocapitalize="off"; inp.autocomplete="off"; inp.spellcheck=false;
+  stage().appendChild(inp);
+  const row = el("div","row");
+  const hintBtn = el("button","btn ghost","Первая буква");
+  const check = el("button","btn primary","Проверить");
+  row.append(hintBtn, check); stage().appendChild(row);
+  const out = el("div","verdict"); stage().appendChild(out);
+
+  hintBtn.onclick = ()=>{ inp.value = GreekCore.firstLetterHint(w.gr); inp.focus(); };
+  let answered = false;
+  const done = ()=>{
+    if(answered) return next();      // повторный Enter уходит дальше, а не считается заново
+    answered = true;
+    const ok = GreekCore.matches(inp.value, w, WORDS);
+    mark(w, ok); flashCard(ok);
+    paintVerdict(out, "verdict", ok, w, "typed");
+    speak(w.gr);
+    check.textContent = "Дальше"; check.disabled = false; inp.blur();
+    check.onclick = next; hintBtn.disabled = true;
+    if(ok) later(next, 1100);
+  };
+  check.onclick = done;
+  inp.addEventListener("keydown", e=>{ if(e.key==="Enter") done(); });
+  inp.focus();
+}
+
+function renderList(){
+  const ul = el("ul","list");
+  for(const w of poolFor(state.deck)){
+    const p = st(w);
+    const li = el("li");
+    const dot = GreekCore.dotClass(p);
+    li.appendChild(el("span", dot ? "dot " + dot : "dot"));
+    const box = el("div","w");
+    box.append(txt("div","g",w.gr), txt("div","r",w.ru));
+    li.appendChild(box);
+    const b = el("button",null,"🔊"); b.onclick=()=>speak(w.gr, true);
+    li.appendChild(b);
+    ul.appendChild(li);
+  }
+  stage().appendChild(ul);
+}
+
+/* ---------- keyboard ---------- */
+document.addEventListener("keydown", e=>{
+  const action = GreekCore.keyAction({
+    key: e.key, mode: state.mode, revealed,
+    inInput: e.target.tagName === "INPUT"
+  });
+  if(action.type === "none") return;
+  if(e.key === " ") e.preventDefault();
+  if(action.type === "reveal"){ const c = document.querySelector(".card"); if(c) c.click(); }
+  else if(action.type === "option"){
+    const b = document.querySelectorAll(".opt")[action.index];
+    if(b && !b.disabled) b.click();
+  }
+  else if(action.type === "primary"){ const b = document.querySelector(".btn.primary"); if(b) b.click(); }
+});
+
+/* ---------- init ---------- */
+let diagOpen = false;
+function paintDiag(){
+  const box = document.getElementById("diagbox");
+  if(!box) return;
+  if(!diagOpen){ box.innerHTML=""; return; }
+  const vs = SS ? (SS.getVoices()||[]) : [];
+  const greek = vs.filter(v=>/^el/i.test(v.lang));
+  const d = el("div","diag");
+  d.innerHTML =
+    "<b>Проверка звука</b>" +
+    "<ul>" +
+    "<li>синтез речи в этой оболочке: " + (SS ? "есть" : "нет — системный голос недоступен") + "</li>" +
+    "<li>голосов видно всего: " + vs.length + "</li>" +
+    "<li>греческих среди них: " + (greek.length ? greek.map(v=>v.name+" ("+v.lang+")").join(", ") : "ни одного") + "</li>" +
+    "<li>звук из интернета: " + (netOk===true ? "работает" : netOk===false ? "заблокирован" : "не проверялся") + "</li>" +
+    "<li>режим озвучки: " + voiceMode + "</li>" +
+    "<li>последняя попытка: " + lastEvent + "</li>" +
+    "<li>устройство: " + navigator.userAgent.replace(/</g,"") + "</li>" +
+    "<li>перехваченные ошибки: " + (ERRORS.length ? ERRORS.join(" | ") : "нет") + "</li>" +
+    "<li>прогресс сохраняется: " + Store.label + " (" + Store.kind + ")"
+      + (storeFail ? " — " + storeFail : "") + "</li>" +
+    "</ul>" +
+    (SS ? "" : "<div style='margin-top:8px'>Скачайте файл и откройте его в Safari или Chrome — там системный греческий голос заработает.</div>");
+  const row = el("div","row");
+  const t1 = el("button","btn","Сказать «καλημέρα»");
+  t1.onclick = ()=>{ lastEvent="ещё не пробовали"; speak("καλημέρα", true); sched.after("diag", paintDiag, 300); };
+  const t2 = el("button","btn ghost","Обновить");
+  t2.onclick = ()=>{ pickVoice(); paintDiag(); };
+  row.append(t1,t2);
+  box.innerHTML=""; box.append(d,row);
+}
+document.getElementById("diagbtn").onclick = ()=>{
+  diagOpen = !diagOpen;
+  document.getElementById("diagbtn").textContent = diagOpen ? "Скрыть проверку" : "Проверить звук";
+  paintDiag();
+};
+document.getElementById("reset").onclick = ()=>{
+  progress = {}; session={right:0,wrong:0,total:0}; save(); paintProgress(); render();
+};
+document.getElementById("voicebtn").onclick = ()=>{
+  voiceMode = {auto:"net", net:"sys", sys:"auto"}[voiceMode];
+  GreekCore.saveVoiceMode(Store, KEY, voiceMode);
+  netOk = null; paintVoice();
+  if(current) speak(current.gr);
+};
+(async function(){
+  await load();
+  document.getElementById("sub").textContent =
+    WORDS.length + " слов · " + DECKS.filter(d=>DATA[d.id]).map(d=>DATA[d.id].length).join(" + ");
+  buildSeg(document.getElementById("decks"), DECKS, "deck");
+  buildSeg(document.getElementById("modes"), MODES, "mode");
+  paintVoice();
+  paintProgress();
+  render();
+})();
+</script>
+</html>
